@@ -1,0 +1,209 @@
+/* devedor.css */
+
+/* Geral */
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+}
+
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+
+h2 {
+    margin: 10px 0;
+    font-size: 24px;
+}
+
+/* Topo com botão Novo Devedor */
+.topo-acoes {
+    width: 95%;
+    margin: 5px auto;
+    margin-bottom: -65px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-novo {
+    background: #2ecc71;
+    padding: 12px 18px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Painel de resumo */
+.painel {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    justify-content: center;
+}
+
+.card {
+    flex: 1;
+    padding: 20px;
+    color: white;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.divida { background: #e74c3c; }
+.pago { background: #27ae60; }
+.clientes { background: #3498db; }
+.vencidas { background: #f39c12; }
+
+.card h3 { margin: 0; font-size: 16px; }
+.card p { font-size: 22px; margin-top: 10px; }
+
+/* Busca */
+.busca-form {
+    width: 90%;
+    margin: 20px auto;
+    display: flex;
+    gap: 10px;
+}
+
+.busca-form input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.busca-form button {
+    padding: 8px 15px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.mostrar-todas {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.mostrar-todas a {
+    padding: 8px 15px;
+    background: #3498db;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Alerta dívidas vencidas */
+.alerta-vencidas {
+    background: #ff4d4d;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Tabela */
+table {
+    width: 90%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 14px;
+    text-align: center;
+}
+
+th {
+    background: #2c3e50;
+    color: white;
+}
+
+td {
+    background: #f9f9f9;
+}
+
+.vencido {
+    background: #ffd6d6 !important;
+    font-weight: bold;
+}
+
+/* Ações */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.actions a, .actions button {
+    padding: 6px 10px;
+    margin: 2px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-editar { background: #3498db; }
+.btn-apagar { background: #e74c3c; }
+.btn-pagar { background: #2ecc71; }
+.btn-pdf { background: #8e44ad; }
+.btn-whatsapp { background: #25D366; }
+
+.material {
+    max-width: 220px;
+    line-height: 1.4;
+}
+
+/* Gráfico */
+canvas#graficoFinanceiro {
+    max-width: 350px !important;
+    max-height: 350px !important;
+    margin: 40px auto;
+    display: block;
+}
+
+/* Responsivo */
+@media(max-width:768px) {
+    .painel { flex-direction: column; align-items: center; }
+    .card { width: 80%; margin-bottom: 10px; }
+    table { width: 100%; }
+    .busca-form { flex-direction: column; }
+    .busca-form input { width: 100%; }
+}
+.card {
+    flex: 1 1 220px;  /* base mínima 220px, pode crescer e encolher */
+    min-height: 140px; /* altura mínima para todos os cards */
+    padding: 20px;
+    color: white;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 18px;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+.busca-form {
+    max-width: 600px;
+    width: 90%;
+    margin: 20px auto;
+    display: flex;
+    gap: 10px;
+}

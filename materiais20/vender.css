@@ -1,0 +1,84 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.pdv-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.pdv-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Área fixa (não rola) */
+.pdv-fixos {
+    flex: 0 0 auto;
+}
+
+/* ÚNICO local com scroll */
+.pdv-itens {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    background: #fff;
+}
+
+.pdv-itens thead th {
+    position: sticky;
+    top: 0;
+    background: #e9ecef;
+    z-index: 2;
+}
+
+.pdv-footer {
+    flex: 0 0 auto;
+    background: #fff;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Reserva espaço fixo para o scroll (não empurra layout) */
+.pdv-itens {
+    scrollbar-gutter: stable;
+}
+
+.pdv-itens table {
+    width: 100%;
+    table-layout: fixed;
+}
+.pdv-itens th:last-child,
+.pdv-itens td:last-child {
+    text-align: right;
+    padding-right: 12px;
+}
+/* Scroll mais fino (Chrome / Edge) */
+.pdv-itens::-webkit-scrollbar {
+    width: 8px;
+}
+
+.pdv-itens::-webkit-scrollbar-thumb {
+    background-color: #bbb;
+    border-radius: 4px;
+}
+
+.pdv-itens::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* Coluna Total sempre visível */
+.pdv-itens th:last-child,
+.pdv-itens td:last-child {
+    width: 120px;
+    min-width: 120px;
+    text-align: right;
+    padding-right: 8px;
+}
+
+
