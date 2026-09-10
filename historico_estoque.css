@@ -1,0 +1,33 @@
+
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+}
+
+table{
+    width:90%;
+    margin:auto;
+    border-collapse: collapse;
+    background:white;
+}
+
+th, td{
+    padding:10px;
+    border:1px solid #ccc;
+    text-align:center;
+}
+
+th{
+    background:#2c3e50;
+    color:white;
+}
+
+h2{
+    text-align:center;
+}
+
+.sem-dados{
+    text-align:center;
+    padding:20px;
+    color:#888;
+}

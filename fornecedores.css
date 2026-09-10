@@ -1,0 +1,196 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: #f5f7fa;
+  color: #333;
+}
+
+/* ===== BARRA SUPERIOR ===== */
+.top-bar {
+  background: #2c3e50;
+  color: white;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.top-bar h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+/* ÁREA DIREITA (BUSCA + BOTÃO) */
+.top-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* INPUT BUSCA */
+.top-actions input {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  min-width: 220px;
+}
+
+/* BOTÕES */
+.btn {
+  padding: 8px 14px;
+  border-radius: 5px;
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.buscar {
+  background: #27ae60;
+}
+.buscar:hover {
+  background: #219150;
+}
+
+.novo {
+  background: #3498db;
+}
+.novo:hover {
+  background: #2980b9;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  width: 95%;
+  max-width: 1100px;
+  margin: 25px auto;
+}
+
+/* ===== TABELA ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+thead {
+  background: #34495e;
+  color: white;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr {
+  transition: 0.2s;
+}
+
+tbody tr:hover {
+  background: #eef5ff;
+}
+/* BOTÕES DA TABELA */
+.whatsapp { background:#25D366; }
+.email { background:#3498db; }
+.editar { background:#f39c12; }
+.apagar { background:#e74c3c; }
+
+.whatsapp:hover { background:#1da851; }
+.email:hover { background:#217dbb; }
+.editar:hover { background:#d68910; }
+.apagar:hover { background:#c0392b; }
+
+/* RESPONSIVO */
+@media(max-width:768px){
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .top-actions {
+    width: 100%;
+  }
+
+  .top-actions input {
+    flex: 1;
+    width: 100%;
+  }
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center; /* <-- ADICIONE ISSO */
+  flex-wrap: wrap;
+}
+
+/* ===== LAYOUT ERP ===== */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: #1f2d3d;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h3 {
+  margin-bottom: 20px;
+}
+
+.sidebar a {
+  display: block;
+  color: #ccc;
+  padding: 10px;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.sidebar a:hover,
+.sidebar .active {
+  background: #34495e;
+  color: white;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+}
+
+/* PAGINAÇÃO */
+#paginacao {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.page-btn {
+  padding: 6px 10px;
+  margin: 3px;
+  border: none;
+  background: #3498db;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.page-btn:hover {
+  background: #2980b9;
+}

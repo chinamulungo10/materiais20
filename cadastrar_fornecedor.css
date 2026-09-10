@@ -1,0 +1,38 @@
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+}
+
+.container{
+    width:400px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:8px;
+    margin-top:30px;
+}
+
+h2{
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:8px;
+    margin:5px 0;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#2ecc71;
+    color:white;
+    border:none;
+    border-radius:5px;
+}
+
+.voltar{
+    display:block;
+    text-align:center;
+    margin-top:10px;
+}

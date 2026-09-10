@@ -1,0 +1,52 @@
+
+.table-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #3e4a61;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background: #f5f5f5;
+}
+
+/* Paginação */
+.pagination {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.page-btn {
+    margin: 3px;
+    padding: 8px 12px;
+    border: none;
+    background: #3498db;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.page-btn:hover {
+    background: #2980b9;
+}
+
+.page-btn.active {
+    background: #2c3e50;
+}

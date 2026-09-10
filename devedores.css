@@ -1,0 +1,622 @@
+
+/* =====================================
+   RESET
+===================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+}
+
+/* =====================================
+   PÁGINA
+===================================== */
+
+.pagina {
+    width: 96%;
+    max-width: 1500px;
+    margin: 25px auto 50px;
+}
+
+/* =====================================
+   CABEÇALHO
+===================================== */
+
+header {
+    background: white;
+    border-radius: 16px;
+    padding: 25px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+    position: relative;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #1f2937;
+}
+
+header p {
+    margin: 7px 0 0;
+    color: #7f8c8d;
+}
+
+.topo-acoes {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+}
+
+.btn-novo {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 9px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-novo:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+/* =====================================
+   ALERTA
+===================================== */
+
+.alerta-vencidas {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #c2410c;
+    border-left: 5px solid #f97316;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* =====================================
+   PAINEL DOS CARDS
+===================================== */
+
+.painel {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.painel a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    min-height: 135px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+    border-left: 5px solid;
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.10);
+}
+
+.card h3 {
+    margin: 0 0 14px;
+    font-size: 15px;
+    color: #6b7280;
+}
+
+.card p {
+    margin: 0;
+    font-size: 25px;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.card small {
+    display: block;
+    margin-top: 7px;
+    color: #7f8c8d;
+}
+
+.card.divida {
+    border-color: #ef4444;
+}
+
+.card.pago {
+    border-color: #22c55e;
+}
+
+.card.clientes {
+    border-color: #3b82f6;
+}
+
+.card.vencidas {
+    border-color: #f59e0b;
+}
+
+/* =====================================
+   BUSCA
+===================================== */
+
+.busca-form {
+    background: white;
+    padding: 18px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.busca-form input {
+    flex: 1;
+    padding: 13px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    font-size: 15px;
+    outline: none;
+}
+
+.busca-form input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+}
+
+.busca-form button {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 0 22px;
+    border-radius: 9px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.busca-form button:hover {
+    background: #1d4ed8;
+}
+
+/* =====================================
+   MOSTRAR TODAS
+===================================== */
+
+.mostrar-todas {
+    margin-bottom: 18px;
+}
+
+.mostrar-todas a {
+    display: inline-block;
+    background: #eef2ff;
+    color: #3730a3;
+    padding: 9px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+
+/* =====================================
+   TABELA DE DEVEDORES
+===================================== */
+
+.tabela-container {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    overflow-x: auto;
+    margin-top: 20px;
+    display: block;
+}
+
+/* Garante que a tabela seja exibida */
+.tabela-container table {
+    display: table !important;
+    width: 100%;
+    min-width: 1200px;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+.tabela-container thead {
+    display: table-header-group !important;
+}
+
+.tabela-container tbody {
+    display: table-row-group !important;
+}
+
+.tabela-container tr {
+    display: table-row !important;
+}
+
+.tabela-container th {
+    display: table-cell !important;
+    background: #1f2937;
+    color: #ffffff;
+    padding: 14px 12px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.tabela-container td {
+    display: table-cell !important;
+    padding: 14px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+    color: #374151;
+    background: #ffffff;
+    vertical-align: middle;
+}
+
+.tabela-container tbody tr:hover td {
+    background: #f8fafc;
+}
+
+/* Linha vencida */
+.tabela-container tbody tr.vencido td {
+    background: #fff5f5;
+}
+
+.tabela-container tbody tr.vencido:hover td {
+    background: #feecec;
+}
+
+/* Primeira coluna */
+.tabela-container td:first-child {
+    font-weight: bold;
+    color: #6b7280;
+}
+
+/* Materiais */
+.materiais {
+    line-height: 1.7;
+    color: #475569;
+}
+
+/* Valores */
+.valor-restante {
+    font-weight: bold;
+}
+
+.valor-alto {
+    color: #dc2626 !important;
+}
+
+.valor-zero {
+    color: #16a34a !important;
+}
+
+/* Ações */
+.actions {
+    min-width: 300px;
+}
+
+.acoes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* =====================================
+   LINHA VENCIDA
+===================================== */
+
+tr.vencido {
+    background: #fff7f7;
+}
+
+tr.vencido:hover {
+    background: #fff1f1;
+}
+
+/* =====================================
+   STATUS
+===================================== */
+
+.status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.status-pago {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-vencido {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-parcial {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-aberto {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* =====================================
+   VALOR RESTANTE
+===================================== */
+
+.valor-restante {
+    font-weight: bold;
+}
+
+.valor-alto {
+    color: #dc2626;
+}
+
+.valor-zero {
+    color: #16a34a;
+}
+
+/* =====================================
+   MATERIAIS
+===================================== */
+
+.materiais {
+    line-height: 1.7;
+    color: #475569;
+}
+
+/* =====================================
+   AÇÕES
+===================================== */
+
+.actions {
+    min-width: 300px;
+}
+
+.acoes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.btn-acao {
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-editar {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.btn-editar:hover {
+    background: #bfdbfe;
+}
+
+.btn-pagar {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.btn-pagar:hover {
+    background: #bbf7d0;
+}
+
+.btn-pdf {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+
+.btn-pdf:hover {
+    background: #e9d5ff;
+}
+
+.btn-whatsapp {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.btn-whatsapp:hover {
+    background: #bbf7d0;
+}
+
+.btn-apagar {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.btn-apagar:hover {
+    background: #fecaca;
+}
+
+/* =====================================
+   GRÁFICO
+===================================== */
+
+/* =====================================
+   GRÁFICO
+===================================== */
+
+.grafico-card {
+    width: 100%;
+    background: #ffffff;
+    margin-top: 25px;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.grafico-card h2 {
+    margin: 0 0 20px;
+    text-align: center;
+    font-size: 20px;
+    color: #1f2937;
+}
+
+.grafico-area {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: 380px;
+    margin: auto;
+}
+/* =====================================
+   MODAL
+===================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+    background: rgba(15,23,42,0.65);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-conteudo {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: aparecer 0.2s ease;
+}
+
+@keyframes aparecer {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-conteudo h2 {
+    margin-top: 0;
+    color: #1f2937;
+}
+
+.modal-conteudo p {
+    color: #6b7280;
+}
+
+.modal-conteudo input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    margin: 10px 0 15px;
+}
+
+.modal-botoes {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-botoes button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-confirmar {
+    background: #dc2626;
+    color: white;
+}
+
+.btn-fechar {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+/* =====================================
+   RESPONSIVO
+===================================== */
+
+@media (max-width: 1000px) {
+
+    .painel {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    header {
+        padding-bottom: 80px;
+    }
+
+    .topo-acoes {
+        left: 25px;
+        right: auto;
+        top: 70px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .pagina {
+        width: 94%;
+        margin-top: 15px;
+    }
+
+    header h1 {
+        font-size: 22px;
+    }
+
+    .painel {
+        grid-template-columns: 1fr;
+    }
+
+    .busca-form {
+        flex-direction: column;
+    }
+
+    .busca-form button {
+        height: 45px;
+    }
+
+    .grafico-area {
+        height: 300px;
+    }
+}
+

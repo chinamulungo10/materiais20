@@ -1,0 +1,36 @@
+body{
+font-family:Arial;
+background:#f4f4f4;
+}
+
+.container{
+width:400px;
+margin:auto;
+margin-top:60px;
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+input{
+width:100%;
+padding:8px;
+margin-bottom:10px;
+}
+
+button {
+    display: block;       /* garante que ocupe toda a largura disponível */
+    width: 100%;
+    padding: 12px;        /* um pouco maior para melhor visual */
+    background: #27ae60;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;   /* opcional, bordas arredondadas */
+    font-size: 16px;      /* opcional, aumenta a legibilidade */
+}
+
+button:hover{
+background:#219150;
+}
