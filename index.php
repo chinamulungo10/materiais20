@@ -25,10 +25,10 @@
 <a href="cadastrar_material.php">➕ Cadastrar Material</a>
 <a href="historico_estoque.php">📚 Histórico Estoque</a>
 <a href="fornecedores.php">🚚 Fornecedores</a>
-<a href="log.php">👨🏿‍💻 Historico - Log</a>
-<a href="devedores.php">💳 Devedores</a>
+<a href="log.php">👨🏿‍💻 Log_Vendas | Acções </a>
+<a href="devedores.php">💳 Detalhes Devedores pdf</a>
 <a href="gerar_senha_hash.php">🔑 Criar senha</a>
-<a href="log_divida.php">🔑 divida</a>
+<a href="log_divida.php">🔑 Log divida</a>
 <a href="contatos.php">📞 Contactos</a>
 
 </nav>

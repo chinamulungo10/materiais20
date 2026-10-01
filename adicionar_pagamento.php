@@ -42,9 +42,9 @@ if (isset($_POST['salvar_pagamento'])) {
     $valor_pago = (float) $_POST['valor_pago'];
     $data_pagamento = $_POST['data_pagamento'];
     $id_devedor = $id;
-     // Consumir a autorização após o pagamento
-   $_SESSION['pagamento_divida_autorizado'] = false;
-   unset($_SESSION['usuario_admin_pagamento']);
+
+    // CORREÇÃO: ler quem autorizou ANTES de qualquer unset
+    $usuario_admin = $_SESSION['usuario_admin_pagamento'] ?? 'Desconhecido';
 
     // Validar valor
     if ($valor_pago <= 0) {
@@ -183,20 +183,10 @@ if (isset($_POST['salvar_pagamento'])) {
     $stmt->execute();
     $stmt->close();
 
-    // ======================================================
-// CONSUMIR A AUTORIZAÇÃO APÓS O PAGAMENTO CONCLUÍDO
-// ======================================================
-
-    $_SESSION['pagamento_divida_autorizado'] = false;
-    unset($_SESSION['usuario_admin_pagamento']);
-
 
     // ======================================================
     // 6. REGISTRAR PAGAMENTO NO LOG
     // ======================================================
-
-    $usuario_admin = $_SESSION['usuario_admin_pagamento']
-    ?? 'Desconhecido';
 
     $acao = "PAGOU";
 
@@ -248,6 +238,10 @@ if (isset($_POST['salvar_pagamento'])) {
 
     $stmt_log->execute();
     $stmt_log->close();
+
+    // Consumir a autorização somente após o pagamento e o log serem concluídos
+    $_SESSION['pagamento_divida_autorizado'] = false;
+    unset($_SESSION['usuario_admin_pagamento']);
 
 
     // ======================================================
