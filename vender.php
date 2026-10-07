@@ -33,6 +33,11 @@ if ($stmt->num_rows === 0) {
     exit;
 }
 
+// Token de uso único (evita gravar a mesma venda duas vezes)
+if (empty($_SESSION['token_venda'])) {
+    $_SESSION['token_venda'] = bin2hex(random_bytes(16));
+}
+
 // Materiais disponíveis
 $materiais = [];
 $result = $conn->query("
@@ -138,28 +143,68 @@ function calcularTotal() {
     document.getElementById('totalCompra').innerText = totalCompra.toFixed(2);
 }
 
-function validarVenda() {
-    if (vendaEnviada) return false;
-    if (!document.querySelectorAll('.material-row').length) {
-        alert("Nenhum produto adicionado à venda.");
-        return false;
-    }
-    vendaEnviada = true;
-    return true;
-}
-
-function confirmarVenda() {
-    if (!validarVenda()) return false;
-    if (!confirm("Deseja finalizar a venda e gerar o PDF?")) return false;
-    return true;
-}
-
-// Limpar campos (após venda concluída, se necessário)
 function limparCampos() {
-    document.querySelector('form').reset();
     document.getElementById('materiaisBody').innerHTML = '';
     document.getElementById('totalCompra').innerText = '0.00';
-    document.getElementById('buscaMaterial').focus();
+    document.querySelector('input[name="cliente"]').value = '';
+    document.querySelector('select[name="forma_pagamento"]').value = '';
+    document.querySelector('select[name="desconto_tipo"]').value = 'valor';
+    document.querySelector('input[name="desconto_valor"]').value = '0';
+    document.getElementById('buscaMaterial').value = '';
+}
+
+async function enviarVenda(e) {
+    e.preventDefault();
+    if (vendaEnviada) return;
+
+    if (!document.querySelectorAll('.material-row').length) {
+        alert("Nenhum produto adicionado à venda.");
+        return;
+    }
+    if (!document.querySelector('input[name="cliente"]').value.trim()) {
+        alert("Informe o nome do cliente.");
+        return;
+    }
+    if (!document.querySelector('select[name="forma_pagamento"]').value) {
+        alert("Selecione a forma de pagamento.");
+        return;
+    }
+    if (!confirm("Deseja finalizar a venda e gerar o PDF?")) return;
+
+    vendaEnviada = true;
+    const btn = document.getElementById('btnConfirmar');
+    btn.disabled = true;
+
+    try {
+        const resp = await fetch('salvar_vendas.php', {
+            method: 'POST',
+            body: new FormData(document.getElementById('formVenda')),
+            headers: { 'X-Requested-With': 'fetch' }
+        });
+        const dados = await resp.json();
+
+        if (!dados.ok) {
+            alert(dados.erro || 'Erro ao salvar a venda.');
+            return;
+        }
+
+        limparCampos();                                              // 1º limpa
+        document.getElementById('tokenVenda').value = dados.token;   // 2º token novo
+        abrirPdf(dados.venda_id);                                    // 3º abre o PDF
+
+    } catch (err) {
+        console.error(err);
+        alert('Falha de comunicação. Confira em "Vendas" se a venda foi gravada antes de repetir.');
+    } finally {
+        vendaEnviada = false;
+        btn.disabled = false;
+    }
+}
+
+function abrirPdf(vendaId) {
+    document.getElementById('pdfVendaId').value = vendaId;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPdf')).show();
+    document.getElementById('formPdf').submit();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -168,6 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             adicionarMaterial();
         }
+    });
+
+    document.getElementById('modalPdf').addEventListener('hidden.bs.modal', () => {
+        document.getElementById('frmPdf').src = 'about:blank';
+        document.getElementById('buscaMaterial').focus();
     });
 });
 </script>
@@ -196,15 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- CORPO -->
 <div class="pdv-body p-3">
 
-<?php
-// Mensagem de sucesso após venda
-if (!empty($_SESSION['venda_sucesso'])) {
-    echo '<div class="alert alert-success">' . $_SESSION['venda_sucesso'] . '</div>';
-    unset($_SESSION['venda_sucesso']);
-}
-?>
-
-<form action="salvar_vendas.php" method="POST" onsubmit="return confirmarVenda()" class="d-flex flex-column h-100">
+<form id="formVenda" onsubmit="enviarVenda(event); return false;" class="d-flex flex-column h-100">
+    <input type="hidden" name="token" id="tokenVenda" value="<?= $_SESSION['token_venda'] ?>">
 
     <!-- CLIENTE + TOTAL -->
     <div class="row mb-3">
@@ -290,5 +333,30 @@ if (!empty($_SESSION['venda_sucesso'])) {
 </form>
 </div>
 </div>
+
+<!-- FORM ESCONDIDO: envia a venda_id para o PDF dentro do iframe -->
+<form id="formPdf" method="POST" action="gerar_pdf_venda.php" target="frmPdf" style="display:none">
+    <input type="hidden" name="venda_id" id="pdfVendaId">
+</form>
+
+<!-- MODAL DO PDF -->
+<div class="modal fade" id="modalPdf" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Comprovante da Venda</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <iframe name="frmPdf" id="frmPdf" style="width:100%; height:75vh; border:0;"></iframe>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar / Nova venda</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

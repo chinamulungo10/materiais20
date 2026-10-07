@@ -1,10 +1,27 @@
 <?php
+ob_start();
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+
 require "proteger.php";
 require "conexao.php";
 require "funcoes_log.php";
 
-if(!isset($_SESSION['usuario_id'])) {
-    die("Usuário não autenticado.");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+function responder($dados) {
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($dados, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if (!isset($_SESSION['usuario_id'])) {
+    responder(['ok' => false, 'erro' => 'Usuário não autenticado.']);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -13,25 +30,20 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $usuario_id = $_SESSION['usuario_id'];
 
-/* =====================
-   DADOS DA VENDA
-===================== */
+/* DADOS DA VENDA */
 $cliente         = trim($_POST['cliente'] ?? '');
 $forma_pagamento = $_POST['forma_pagamento'] ?? '';
 $desconto_tipo   = $_POST['desconto_tipo'] ?? 'valor';
 $desconto_valor  = floatval($_POST['desconto_valor'] ?? 0);
 $materiais       = $_POST['materiais'] ?? [];
+$token           = $_POST['token'] ?? '';
 
-$formas_validas = [
-    'dinheiro',
-    'pix',
-    'cartao',
-    'cheque',
-    'transf_bancaria',
-    'mpesa',
-    'emola',
-    'divida'
-];
+$formas_validas = ['dinheiro','pix','cartao','cheque','transf_bancaria','mpesa','emola','divida'];
+
+/* Token de uso único: impede gravar a mesma venda duas vezes */
+if ($token === '' || !hash_equals($_SESSION['token_venda'] ?? '', $token)) {
+    responder(['ok' => false, 'erro' => 'Esta venda já foi processada. Recarregue a página (Ctrl+F5) para uma nova venda.']);
+}
 
 if (
     $cliente === '' ||
@@ -39,30 +51,22 @@ if (
     !is_array($materiais) ||
     !in_array($forma_pagamento, $formas_validas, true)
 ) {
-    die("Venda inválida.");
+    responder(['ok' => false, 'erro' => 'Venda inválida.']);
 }
 
-/* =====================
-   TRANSACTION
-===================== */
 $conn->begin_transaction();
 
 try {
 
-    /* =====================
-       CALCULAR TOTAL + VALIDAR ESTOQUE
-    ===================== */
+    /* CALCULAR TOTAL + VALIDAR ESTOQUE */
     $total = 0;
     $itens = [];
 
     $stmtMaterial = $conn->prepare(
-        "SELECT nome, custo_venda, quantidade
-         FROM materiais
-         WHERE id = ? FOR UPDATE"
+        "SELECT nome, custo_venda, quantidade FROM materiais WHERE id = ? FOR UPDATE"
     );
 
     foreach ($materiais as $item) {
-
         $material_id = (int)($item['id'] ?? 0);
         $qtd         = (int)($item['quantidade'] ?? 0);
 
@@ -77,11 +81,8 @@ try {
         if (!$m) {
             throw new Exception("Material não encontrado.");
         }
-
         if ($m['quantidade'] < $qtd) {
-            throw new Exception(
-                "Estoque insuficiente para o produto: {$m['nome']}"
-            );
+            throw new Exception("Estoque insuficiente para o produto: {$m['nome']}");
         }
 
         $linha = $m['custo_venda'] * $qtd;
@@ -100,9 +101,7 @@ try {
         throw new Exception("Total inválido.");
     }
 
-    /* =====================
-       DESCONTO
-    ===================== */
+    /* DESCONTO */
     $desconto_aplicado = ($desconto_tipo === 'percentual')
         ? ($total * ($desconto_valor / 100))
         : $desconto_valor;
@@ -110,169 +109,71 @@ try {
     $desconto_aplicado = max(0, min($desconto_aplicado, $total));
     $total_final = $total - $desconto_aplicado;
 
-    /* =====================
-       SALVAR VENDA
-    ===================== */
+    /* SALVAR VENDA */
     $stmtVenda = $conn->prepare("
         INSERT INTO vendas
         (cliente, usuario_id, total, forma_pagamento, desconto, status, data_venda)
         VALUES (?, ?, ?, ?, ?, 'concluida', NOW())
     ");
-
-    $stmtVenda->bind_param(
-        "sidsd",
-        $cliente,
-        $usuario_id,
-        $total_final,
-        $forma_pagamento,
-        $desconto_aplicado
-    );
-
+    $stmtVenda->bind_param("sidsd", $cliente, $usuario_id, $total_final, $forma_pagamento, $desconto_aplicado);
     $stmtVenda->execute();
     $venda_id = $stmtVenda->insert_id;
 
-    /* =====================
-       ITENS + ESTOQUE
-    ===================== */
+    /* ITENS + ESTOQUE */
     $stmtItem = $conn->prepare("
-        INSERT INTO itens_venda
-        (venda_id, material_id, quantidade, preco_unitario, total)
+        INSERT INTO itens_venda (venda_id, material_id, quantidade, preco_unitario, total)
         VALUES (?, ?, ?, ?, ?)
     ");
-
-    $stmtEstoque = $conn->prepare("
-        UPDATE materiais
-        SET quantidade = quantidade - ?
-        WHERE id = ?
-    ");
-
-
-   foreach ($itens as $i) {
-
-    $stmtItem->bind_param(
-        "iiidd",
-        $venda_id,
-        $i['id'],
-        $i['qtd'],
-        $i['unit'],
-        $i['total']
-    );
-
-    // GRAVA O ITEM DA VENDA
-if (!$stmtItem->execute()) {
-    throw new Exception(
-        "Erro ao gravar item da venda: " . $stmtItem->error
-    );
-}
-
-// ATUALIZA O ESTOQUE
-$stmtEstoque->bind_param("ii", $i['qtd'], $i['id']);
-
-if (!$stmtEstoque->execute()) {
-    throw new Exception(
-        "Erro ao atualizar estoque: " . $stmtEstoque->error
-    );
-}
-
-    // GRAVA O ITEM DA VENDA
-   /* $stmtItem->execute();
-
-    // ATUALIZA O ESTOQUE
-    $stmtEstoque->bind_param("ii", $i['qtd'], $i['id']);
-    $stmtEstoque->execute();*/
-}
-
-    //dados de devedores adiciona materiais e o valor em divida CRIAR DÍVIDA
-// ===========================================================================
-if ($forma_pagamento == 'divida') {
-
-    $data_hoje = date("Y-m-d");
-    $vencimento = date("Y-m-d", strtotime("+30 days"));
-
-    $materiais_texto = '';
+    $stmtEstoque = $conn->prepare("UPDATE materiais SET quantidade = quantidade - ? WHERE id = ?");
 
     foreach ($itens as $i) {
-        $materiais_texto .= $i['nome'] . ' x' . $i['qtd'] . ', ';
+        $stmtItem->bind_param("iiidd", $venda_id, $i['id'], $i['qtd'], $i['unit'], $i['total']);
+        if (!$stmtItem->execute()) {
+            throw new Exception("Erro ao gravar item da venda: " . $stmtItem->error);
+        }
+
+        $stmtEstoque->bind_param("ii", $i['qtd'], $i['id']);
+        if (!$stmtEstoque->execute()) {
+            throw new Exception("Erro ao atualizar estoque: " . $stmtEstoque->error);
+        }
     }
 
-    $stmtDevedor = $conn->prepare("
-        INSERT INTO devedores
-        (
-            id_venda,
-            nome_cliente,
-            telefone,
-            material,
-            valor_divida,
-            data_divida,
-            data_vencimento,
-            status
-        )
-        VALUES (?, ?, '', ?, ?, ?, ?, 'ABERTO')
-    ");
+    /* DÍVIDA */
+    if ($forma_pagamento == 'divida') {
+        $data_hoje  = date("Y-m-d");
+        $vencimento = date("Y-m-d", strtotime("+30 days"));
 
-    $stmtDevedor->bind_param(
-        "issdss",
-        $venda_id,
-        $cliente,
-        $materiais_texto,
-        $total_final,
-        $data_hoje,
-        $vencimento
-    );
+        $materiais_texto = '';
+        foreach ($itens as $i) {
+            $materiais_texto .= $i['nome'] . ' x' . $i['qtd'] . ', ';
+        }
 
-    $stmtDevedor->execute();
-}
-/////////////////////////////////////////////////////////////////////////////// Chafim
-$descricao_itens = "";
-   
-foreach ($itens as $i) {
+        $stmtDevedor = $conn->prepare("
+            INSERT INTO devedores
+            (id_venda, nome_cliente, telefone, material, valor_divida, data_divida, data_vencimento, status)
+            VALUES (?, ?, '', ?, ?, ?, ?, 'ABERTO')
+        ");
+        $stmtDevedor->bind_param("issdss", $venda_id, $cliente, $materiais_texto, $total_final, $data_hoje, $vencimento);
+        $stmtDevedor->execute();
+    }
 
-    $descricao_itens .=
-        "- {$i['nome']} | Quantidade: {$i['qtd']} | " .
-        "Preço unitário: R$ " . number_format($i['unit'], 2, ',', '.') .
-        " | Total: R$ " . number_format($i['total'], 2, ',', '.') . "\n";
-}
+    /* LOG */
+    foreach ($itens as $i) {
+        registrarLog("Venda $venda_id realizada", $i['id'], $i['qtd']);
+    }
 
-foreach ($itens as $i) {
-
-    $mensagem = "Venda $venda_id realizada";
-
-    registrarLog(
-        $mensagem,
-        $i['id'],
-        $i['qtd']
-    );
-}
-
-/* =====================
-   LOG DA VENDA
-===================== 
-$mensagem = "Venda $venda_id:\n" . $descricao_itens;
-
-registrarLog(
-    $mensagem,
-    null,
-    null
-);
-*/
-    /* =====================
-       COMMIT
-    ===================== */
     $conn->commit();
 
-    /* =====================
-       REDIRECIONAR PARA PDF
-    ===================== */
-    echo '
-    <form id="pdfForm" method="POST" action="gerar_pdf_venda.php">
-        <input type="hidden" name="venda_id" value="'.$venda_id.'">
-    </form>
-    <script>
-        document.getElementById("pdfForm").submit();
-    </script>';
-    exit;
+    /* Novo token para a próxima venda */
+    $_SESSION['token_venda'] = bin2hex(random_bytes(16));
+
+    responder([
+        'ok'       => true,
+        'venda_id' => (int)$venda_id,
+        'token'    => $_SESSION['token_venda']
+    ]);
 
 } catch (Exception $e) {
     $conn->rollback();
-    die("Erro na venda: " . $e->getMessage());
+    responder(['ok' => false, 'erro' => 'Erro na venda: ' . $e->getMessage()]);
 }

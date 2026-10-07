@@ -5,7 +5,8 @@ require "fpdf/fpdf.php";
 require "proteger.php";
 
 
-
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 /* =====================
    NOVO: CLASSE PDF COM ROTAÇÃO
 ===================== */
@@ -228,8 +229,15 @@ if (!is_dir($pasta)) {
 $nomeArquivo = "fatura_$numeroFatura.pdf";
 $caminhoPdf = $pasta . $nomeArquivo;
 
-/* salva no servidor */
+/* salva no servidor 
 $pdf->Output("F", $caminhoPdf);
 
-/* exibe no navegador */
+ exibe no navegador 
+$pdf->Output("I", $nomeArquivo);*/
+
+/* salva no servidor (segunda via) */
+$pdf->Output("F", $caminhoPdf);
+
+/* exibe no navegador (dentro do iframe do modal) */
+header('X-Frame-Options: SAMEORIGIN');
 $pdf->Output("I", $nomeArquivo);

@@ -10,6 +10,11 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
+if (($_SESSION['nivel'] ?? '') !== 'admin') {
+    exit("Acesso negado.");
+}
+
+
 /*
  * Buscar os logs
  */
@@ -106,11 +111,13 @@ if (!$result) {
                     </td>
 
                     <td>
-                        <?= htmlspecialchars($log['nome_cliente'] ?? 'Cliente não encontrado') ?>
+                      <a href="detalhes_divida.php?id=<?= (int)$log['id_devedor'] ?>">
+                       <?= htmlspecialchars($log['nome_cliente'] ?? 'Cliente não encontrado') ?>
+                      </a>
                     </td>
 
                     <td>
-                        👤 <?= htmlspecialchars($log['usuario_admin']) ?>
+                        👤 <?= htmlspecialchars($log['usuario_admin'] ?? 'Desconhecido') ?>
                     </td>
 
                     <td>
